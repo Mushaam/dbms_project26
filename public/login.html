@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login · Museum Lifecycle</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="login-wrap">
+    <div class="panel">
+      <h1>Museum Lifecycle</h1>
+      <p class="lead" id="lead-text">Sign in to run reports and manage records.</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="active" id="tab-login" data-mode="login">Sign in</button>
+        <button type="button" id="tab-signup" data-mode="signup">Sign up as staff</button>
+      </div>
+
+      <form id="auth-form">
+        <div id="fullname-field" class="hidden">
+          <label for="full_name">Full name</label>
+          <input id="full_name" name="full_name" autocomplete="name" />
+        </div>
+
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required />
+
+        <label for="password">Password</label>
+        <div class="password-field">
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <button type="button" class="eye-btn" id="toggle-password" aria-label="Show password" title="Show password">
+            <span id="eye-label">Show</span>
+          </button>
+        </div>
+
+        <button type="submit" id="submit-btn">Sign in</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <p class="muted">
+        Demo: <code>admin</code> / <code>admin123</code>
+        · Staff: <code>user1</code> / <code>user123</code>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script>
+    let mode = 'login';
+
+    (async () => {
+      try {
+        const me = await api('/api/me');
+        if (me && me.user) window.location.href = '/index.html';
+      } catch {
+        /* stay on login */
+      }
+    })();
+
+    function setMode(next) {
+      mode = next;
+      const isSignup = mode === 'signup';
+      document.getElementById('tab-login').classList.toggle('active', !isSignup);
+      document.getElementById('tab-signup').classList.toggle('active', isSignup);
+      document.getElementById('name-field').classList.toggle('hidden', !isSignup);
+      document.getElementById('full_name').required = isSignup;
+      document.getElementById('lead-text').textContent = isSignup
+        ? 'Register as a museum staff member.'
+        : 'Sign in to run reports and manage records.';
+      document.getElementById('submit-btn').textContent = isSignup ? 'Create account' : 'Sign in';
+      document.getElementById('password').autocomplete = isSignup ? 'new-password' : 'current-password';
+      setMessage(document.getElementById('msg'), '');
+    }
+
+    document.getElementById('tab-login').addEventListener('click', () => setMode('login'));
+    document.getElementById('tab-signup').addEventListener('click', () => setMode('signup'));
+
+    document.getElementById('toggle-password').addEventListener('click', () => {
+      const input = document.getElementById('password');
+      const btn = document.getElementById('toggle-password');
+      const label = document.getElementById('eye-label');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      btn.title = show ? 'Hide password' : 'Show password';
+      label.textContent = show ? 'Hide' : 'Show';
+    });
+
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('msg');
+      setMessage(msg, '');
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const full_name = document.getElementById('full_name').value.trim();
+
+      try {
+        if (mode === 'signup') {
+          await api('/api/signup', {
+            method: 'POST',
+            body: { username, password, full_name }
+          });
+        } else {
+          await api('/api/login', {
+            method: 'POST',
+            body: { username, password }
+          });
+        }
+        window.location.href = '/index.html';
+      } catch (err) {
+        setMessage(msg, err.message || (mode === 'signup' ? 'Signup failed' : 'Login failed'), 'error');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reports · Museum Lifecycle</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">Museum Lifecycle</div>
+    <nav>
+      <a class="active" href="/index.html">Reports</a>
+      <a href="/manage.html">Manage Data</a>
+      <button type="button" class="secondary" id="logout-btn">Logout</button>
+    </nav>
+    <div class="user-chip" id="user-chip"></div>
+  </header>
+
+  <main>
+    <h1>Reports / Queries</h1>
+    <p class="lead">Run project queries Q1–Q20. Results appear in the table below.</p>
+
+    <div id="query-list" class="query-list"></div>
+
+    <section class="panel" style="margin-top: 1rem;">
+      <h2 id="result-title">Results</h2>
+      <p id="result-msg" class="msg"></p>
+      <div id="result-table"></div>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/reports.js"></script>
+</body>
+</html>

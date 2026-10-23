@@ -1,0 +1,19 @@
+{
+  "name": "museum-lifecycle",
+  "version": "1.0.0",
+  "description": "Museum Artifact Lifecycle and Exhibition Tracking System",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mysql2": "^3.12.0"
+  }
+}
